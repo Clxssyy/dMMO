@@ -8,6 +8,15 @@ module.exports = {
 
     if (user.bot) return;
 
-    level(user, 'Messaging');
+    if (message.channel.isThread()) {
+      const threadStartMessage = await message.channel.fetchStarterMessage();
+      const threadCreator = threadStartMessage.author;
+
+      if (user.id == threadCreator.id) return;
+
+      level(threadCreator, 'Discussion');
+    } else {
+      level(user, 'Messaging');
+    }
   },
 };
