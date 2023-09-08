@@ -2,7 +2,7 @@ const { Events } = require('discord.js');
 const level = require('../utils/level.js');
 
 module.exports = {
-  name: Events.MessageCreate,
+  name: Events.GuildScheduledEventUserAdd,
   async execute(event, user) {
     const user = message.author;
 
