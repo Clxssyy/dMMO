@@ -4,8 +4,6 @@ const level = require('../utils/level.js');
 module.exports = {
   name: Events.GuildScheduledEventUserAdd,
   async execute(event, user) {
-    const user = message.author;
-
     if (user.bot) return;
 
     const eventCreator = event.creator;
