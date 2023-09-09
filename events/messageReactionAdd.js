@@ -6,6 +6,8 @@ module.exports = {
   async execute(reaction, user) {
     if (user.bot) return;
 
+    if (reaction.message.author === user) return;
+
     level(user, 'Reacting');
   },
 };
