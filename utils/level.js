@@ -39,8 +39,8 @@ module.exports = async (user, skill) => {
     await userSchema.updateOne(
       { userID: user.id },
       {
-        [skill.toLowerCase() + 'Level']: level,
-        totalLevel: data.totalLevel + level - oldLevel,
+        [skill.toLowerCase() + 'Level']: level.toFixed(4),
+        totalLevel: (data.totalLevel + level - oldLevel).toFixed(4),
         lastLevel: skill.toLowerCase(),
         lastLevelDate: Date.now(),
       }
