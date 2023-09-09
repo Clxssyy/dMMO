@@ -13,6 +13,7 @@ module.exports = async (user, skill) => {
       hostingLevel: 0,
       editingLevel: 0,
       cleaningLevel: 0,
+      totalLevel: 0,
       lastLevel: skill.toLowerCase(),
       lastLevelDate: Date.now(),
     });
@@ -35,10 +36,11 @@ module.exports = async (user, skill) => {
     }
 
     // Update level in database
-    await userSchema.findOneAndUpdate(
+    await userSchema.updateOne(
       { userID: user.id },
       {
         [skill.toLowerCase() + 'Level']: level,
+        totalLevel: data.totalLevel + level - oldLevel,
         lastLevel: skill.toLowerCase(),
         lastLevelDate: Date.now(),
       }

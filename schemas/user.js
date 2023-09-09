@@ -8,8 +8,9 @@ let userSchema = new Schema({
   hostingLevel: Number,
   editingLevel: Number,
   cleaningLevel: Number,
+  totalLevel: Number,
   lastLevel: String,
   lastLevelDate: Date,
 });
 
-module.exports = model('userSchema', userSchema);
+module.exports = model('users', userSchema);
