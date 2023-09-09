@@ -1,5 +1,5 @@
 const { Events } = require('discord.js');
-const level = require('../utils/level.js');
+const level = require('../utils/level');
 
 module.exports = {
   name: Events.MessageCreate,
