@@ -5,7 +5,7 @@ const path = require('node:path');
 require('dotenv').config();
 
 const commands = [];
-const foldersPath = path.join(__dirname, 'commands');
+const foldersPath = path.join(__dirname, '../commands');
 const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
@@ -28,7 +28,7 @@ for (const folder of commandFolders) {
   }
 }
 
-const rest = new REST().setToken(process.env.DISCORD_TOKEN);
+const rest = new REST().setToken(process.env.BOT_TOKEN);
 
 (async () => {
   try {
@@ -37,7 +37,7 @@ const rest = new REST().setToken(process.env.DISCORD_TOKEN);
     );
 
     const data = await rest.put(
-      Routes.applicationCommands(process.env.CLIENT_ID),
+      Routes.applicationCommands(process.env.APP_ID),
       {
         body: commands,
       }
