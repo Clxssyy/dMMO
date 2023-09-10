@@ -9,8 +9,12 @@ let userSchema = new Schema({
   editingLevel: Number,
   cleaningLevel: Number,
   totalLevel: Number,
-  lastLevel: String,
-  lastLevelDate: Date,
+  messagingCD: Date,
+  reactingCD: Date,
+  discussingCD: Date,
+  hostingCD: Date,
+  editingCD: Date,
+  cleaningCD: Date,
 });
 
 module.exports = model('users', userSchema);

@@ -14,41 +14,36 @@ module.exports = async (user, skill) => {
       editingLevel: 0,
       cleaningLevel: 0,
       totalLevel: 0,
-      lastLevel: skill.toLowerCase(),
-      lastLevelDate: Date.now(),
     });
+
+    const data = await userSchema.findOne({ userID: String(user.id) });
+  }
+  // Anti-spam
+  if (Date.parse(data[skill.toLowerCase() + 'CD']) + 60000 > Date.now()) {
+    return;
+  }
+
+  let level = data[skill.toLowerCase() + 'Level'];
+  const oldLevel = level;
+
+  if (level == 0) {
+    level = 1;
   } else {
-    // Anti-spam
-    if (
-      data.lastLevel == skill.toLowerCase() &&
-      Date.parse(data.lastLevelDate) + 300000 > Date.now()
-    ) {
-      return;
+    level += 1 / (Math.floor(level) * 10);
+  }
+
+  // Update level in database
+  await userSchema.updateOne(
+    { userID: user.id },
+    {
+      [skill.toLowerCase() + 'Level']: level.toFixed(4),
+      totalLevel: (data.totalLevel + level - oldLevel).toFixed(4),
+      [skill.toLowerCase() + 'CD']: Date.now(),
     }
+  );
 
-    let level = data[skill.toLowerCase() + 'Level'];
-    const oldLevel = level;
-
-    if (level == 0) {
-      level = 1;
-    } else {
-      level += 1 / (Math.floor(level) * 10);
-    }
-
-    // Update level in database
-    await userSchema.updateOne(
-      { userID: user.id },
-      {
-        [skill.toLowerCase() + 'Level']: level.toFixed(4),
-        totalLevel: (data.totalLevel + level - oldLevel).toFixed(4),
-        lastLevel: skill.toLowerCase(),
-        lastLevelDate: Date.now(),
-      }
-    );
-
-    // Send message to user if they leveled up
-    if (oldLevel < Math.floor(level)) {
-      user.send(`You leveled up ${skill} to level ${Math.floor(level)}!`);
-    }
+  // Send message to user if they leveled up
+  if (oldLevel < Math.floor(level)) {
+    user.send(`You leveled up ${skill} to level ${Math.floor(level)}!`);
   }
 };
