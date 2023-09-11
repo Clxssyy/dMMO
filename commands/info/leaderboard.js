@@ -1,6 +1,33 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('@discordjs/builders');
 const userSchema = require('../../schemas/user');
 
+// @param {Array} userStats - Array of user stats objects.
+// @param {String} skill - Selected skill for the leaderboard.
+// @param {Interaction} interaction - The interaction object.
+// @returns {Array} - Array of field objects for embed.
+function getFields(userStats, skill, interaction) {
+  return userStats.map((userStat, index) => ({
+    name: `${index + 1}. ${
+      interaction.client.users.cache.get(String(userStat.userID)).username
+    }`,
+    value: `${userStat[skill]}`,
+  }));
+}
+
+// @param {Array} fields - Array of field objects for embed.
+// @param {String} skill - The type of leaderboard to show.
+// @returns {EmbedBuilder} - The formatted embed to send.
+function formatLeaderboard(fields, skill) {
+  skill = skill.charAt(0).toUpperCase() + skill.slice(1);
+  skill = skill.replace('Level', '');
+
+  return new EmbedBuilder()
+    .setTitle(`dMMO ${skill} Leaderboard`)
+    .setDescription(`Top 10 players in the server.`)
+    .setColor(0x5662f6)
+    .setFields(fields);
+}
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('leaderboard')
@@ -21,7 +48,8 @@ module.exports = {
     ),
   async execute(interaction) {
     const guild = interaction.guild;
-    let choice = interaction.options.getString('skill') || 'totalLevel';
+    const selectedSkill =
+      interaction.options.getString('skill') || 'totalLevel';
 
     const userIDs = (await guild.members.fetch())
       .filter((member) => !member.user.bot)
@@ -29,34 +57,12 @@ module.exports = {
 
     const userStats = await userSchema
       .find({ userID: { $in: userIDs } })
-      .sort({ [choice]: -1 })
+      .sort({ [selectedSkill]: -1 })
       .limit(10);
 
-    const usernames = [];
+    const fields = getFields(userStats, selectedSkill, interaction);
 
-    for (let i = 0; i < userStats.length; i++) {
-      usernames.push(
-        interaction.client.users.cache.get(String(userStats[i].userID))
-      );
-    }
-
-    const fields = [];
-
-    for (let i = 0; i < userStats.length; i++) {
-      fields.push({
-        name: `${i + 1}. ${usernames[i].username}`,
-        value: `${userStats[i][choice]}`,
-      });
-    }
-
-    choice = choice.charAt(0).toUpperCase() + choice.slice(1);
-    choice = choice.replace('Level', '');
-
-    const embed = new EmbedBuilder()
-      .setTitle(`dMMO ${choice} Leaderboard`)
-      .setDescription(`Top 10 players in the server.`)
-      .setColor(0x5662f6)
-      .setFields(fields);
+    const embed = formatLeaderboard(fields, selectedSkill);
 
     await interaction.reply({ embeds: [embed] });
   },
