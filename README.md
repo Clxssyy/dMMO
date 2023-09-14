@@ -11,8 +11,6 @@
 - Discussion (Users messaging in a thread you created)
 - Hosting (Users signing up for your hosted event) (Experimental)
 
-Have a skill suggestion? Join the [Discord](https://discord.gg/ATUud59GrU)!
-
 ## Commands
 
 - `/leaderboard (type?)` - Display a the top 10 users (default type: total level)
@@ -28,4 +26,5 @@ Have a skill suggestion? Join the [Discord](https://discord.gg/ATUud59GrU)!
 
 ## Contribution
 
-Have a suggestion? Feel free to join the [Discord](https://discord.gg/ATUud59GrU) or make a pull request!
+Have a suggestion? Feel free to join the [Discord](https://discord.gg/ATUud59GrU)!
+Find a bug? Create an issue! Once an issue is made feel free to create a branch and pull request.
