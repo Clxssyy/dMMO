@@ -15,6 +15,7 @@
 
 - `/leaderboard (type?)` - Display a the top 10 users (default type: total level)
 - `/stats (user?)` - Display a user's stats (default: user who sent command)
+- `/botstats` - Display the bot's info
 
 ## To-do
 
