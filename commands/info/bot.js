@@ -36,12 +36,18 @@ module.exports = {
 
     const botDiscordButton = new ButtonBuilder()
       .setStyle(5)
-      .setLabel('GitHub')
+      .setLabel('Discord')
       .setURL('https://discord.gg/ATUud59GrU');
+
+    const botGitHubButton = new ButtonBuilder()
+      .setStyle(5)
+      .setLabel('GitHub')
+      .setURL('https://github.com/Clxssyy/dMMO');
 
     const actionRow = new ActionRowBuilder().addComponents(
       botInviteButton,
-      botDiscordButton
+      botDiscordButton,
+      botGitHubButton
     );
 
     await interaction.reply({ components: [actionRow], embeds: [embed] });
