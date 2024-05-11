@@ -24,6 +24,7 @@
   - Colored names?
 - Global leaderboard
 - Profile
+- Discord Activity
 
 ## Contribution
 
