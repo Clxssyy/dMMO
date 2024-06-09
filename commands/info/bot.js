@@ -31,7 +31,7 @@ module.exports = {
       .setStyle(5)
       .setLabel('Invite')
       .setURL(
-        'https://discord.com/api/oauth2/authorize?client_id=1046864165387649024&permissions=8&scope=bot%20applications.commands'
+        'https://discord.com/oauth2/authorize?client_id=1149368160206737508&permissions=8&integration_type=0&scope=bot+applications.commands'
       );
 
     const botDiscordButton = new ButtonBuilder()
