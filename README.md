@@ -19,12 +19,14 @@
 
 ## To-do
 
-- Reward system
+- [ ] Reward system
   - Titles
-  - Colored names?
-- Global leaderboard
-- Profile
-- Discord Activity
+  - Colored names
+  - Badges / achievements
+- [ ] Global leaderboard
+- [ ] User profiles
+- [ ] Random events
+- [ ] Quests
 
 ## Contribution
 
