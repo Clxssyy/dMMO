@@ -45,8 +45,10 @@ module.exports = async (interaction, skill) => {
       }
     );
 
+    serverData = await serverSchema.findOne({ serverID: server.id });
+
     data = await serverData.users.find(
-      (user) => user.userID == String(user.id)
+      (foundUser) => foundUser.userID == String(user.id)
     );
   }
   // Anti-spam
