@@ -18,12 +18,14 @@ module.exports = {
       .addFields(
         {
           name: 'Developer',
-          value: 'clxssy.',
+          value: interaction.client.users.cache.get('168459082242457600')
+            ? '<@168459082242457600>'
+            : 'clxssy.',
           inline: true,
         },
         {
           name: 'Servers',
-          value: '1',
+          value: String(interaction.client.guilds.cache.size),
           inline: true,
         }
       )
