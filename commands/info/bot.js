@@ -12,20 +12,27 @@ module.exports = {
   async execute(interaction) {
     const embed = new EmbedBuilder()
       .setTitle('dMMO')
-      .setColor(0x5662f6)
-      .setThumbnail(interaction.client.user.displayAvatarURL())
-      .setDescription('Keep track of user interactions in a MMO format.')
+      .setDescription(
+        'Keep track of your activity in a MMO format with:\n\n> Skills\n> Quests\n> Events\n> Leaderboards\n\nYou can even collect unique titles and roles!\n\nType `/` to see all the commands.'
+      )
       .addFields(
-        { name: 'Creator', value: 'clxssy.' },
         {
-          name: 'Skills',
-          value: 'Messaging\nReacting\nDiscussing\nHosting\nEditing\nCleaning',
+          name: 'Developer',
+          value: 'clxssy.',
+          inline: true,
         },
         {
-          name: 'Commands',
-          value: 'Type `/` to see all commands.',
+          name: 'Servers',
+          value: '1',
+          inline: true,
         }
-      );
+      )
+      .setThumbnail(interaction.client.user.displayAvatarURL())
+      .setColor(0x5662f6)
+      .setFooter({
+        text: 'Have a suggestion?',
+      })
+      .setTimestamp();
 
     const botInviteButton = new ButtonBuilder()
       .setStyle(5)
