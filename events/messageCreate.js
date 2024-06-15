@@ -14,9 +14,9 @@ module.exports = {
 
       if (user.id == threadCreator.id) return;
 
-      level(threadCreator, 'Discussion');
+      level(message, 'Discussion');
     } else {
-      level(user, 'Messaging');
+      level(message, 'Messaging');
     }
   },
 };

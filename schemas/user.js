@@ -1,6 +1,6 @@
 const { model, Schema } = require('mongoose');
 
-let userSchema = new Schema({
+const userSchema = new Schema({
   userID: String,
   messagingLevel: Number,
   reactingLevel: Number,
