@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('@discordjs/builders');
-const userSchema = require('../../schemas/user');
+const serverSchema = require('../../schemas/server');
 
 const LEADERBOARD_COLOR = 0x5662f6;
 
@@ -15,10 +15,20 @@ async function getUserStats(guild, skill) {
     .map((member) => String(member.user.id));
 
   try {
-    return await userSchema
-      .find({ userID: { $in: userIDs } })
-      .sort({ [skill]: -1 })
-      .limit(10);
+    if (serverSchema.find({ serverID: guild.id }).count() === 0) {
+      serverSchema.create({
+        serverID: guild.id,
+        users: [],
+      });
+    }
+
+    const serverData = await serverSchema.findOne({ serverID: guild.id });
+    const userStats = serverData.users
+      .filter((user) => userIDs.includes(user.userID))
+      .sort((a, b) => b[skill] - a[skill])
+      .slice(0, 10);
+
+    return userStats;
   } catch (err) {
     console.log(err);
   }

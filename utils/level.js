@@ -15,7 +15,7 @@ module.exports = async (interaction, skill) => {
     serverData = await serverSchema.findOne({ serverID: server.id });
   }
 
-  let data = serverData.users.find(
+  let data = await serverData.users.find(
     (foundUser) => foundUser.userID == String(user.id)
   );
 
@@ -69,7 +69,7 @@ module.exports = async (interaction, skill) => {
     {
       ['users.$.' + skill.toLowerCase() + 'Level']: level.toFixed(4),
       ['users.$.' + skill.toLowerCase() + 'CD']: Date.now(),
-      ['users.$.totalLevel']: data.totalLevel + (level - oldLevel).toFixed(4),
+      ['users.$.totalLevel']: (data.totalLevel + level - oldLevel).toFixed(4),
     }
   );
 
