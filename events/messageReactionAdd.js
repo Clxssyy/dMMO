@@ -8,6 +8,6 @@ module.exports = {
 
     if (reaction.message.author === user) return;
 
-    level(user, 'Reacting');
+    level(reaction, 'Reacting');
   },
 };

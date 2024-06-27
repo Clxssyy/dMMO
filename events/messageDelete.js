@@ -8,6 +8,6 @@ module.exports = {
 
     if (user.bot) return;
 
-    level(user, 'Cleaning');
+    level(message, 'Cleaning');
   },
 };

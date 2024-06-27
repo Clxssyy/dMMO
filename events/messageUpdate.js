@@ -8,6 +8,6 @@ module.exports = {
 
     if (user.bot) return;
 
-    level(user, 'Editing');
+    level(message, 'Editing');
   },
 };

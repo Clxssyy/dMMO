@@ -10,6 +10,6 @@ module.exports = {
 
     if (eventCreator.id == user.id) return;
 
-    level(eventCreator, 'Hosting');
+    level(event, 'Hosting');
   },
 };

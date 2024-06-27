@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('@discordjs/builders');
-const userSchema = require('../../schemas/user');
+const serverSchema = require('../../schemas/server');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -17,7 +17,10 @@ module.exports = {
         ephemeral: true,
       });
 
-    let userStats = await userSchema.findOne({ userID: String(user.id) });
+    let userStats = await serverSchema.findOne({
+      serverID: interaction.guild.id,
+      userID: String(user.id),
+    });
 
     if (!userStats) {
       await userSchema.create({
