@@ -27,6 +27,7 @@
 - [ ] User profiles
 - [ ] Random events
 - [ ] Quests
+- [ ] Custom canvas displays
 
 ## Contribution
 
