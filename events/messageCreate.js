@@ -1,10 +1,11 @@
 const { Events } = require('discord.js');
-const level = require('../utils/level');
+const levelSkill = require('../utils/levelSkill');
 
 module.exports = {
   name: Events.MessageCreate,
   async execute(message) {
     const user = message.author;
+    const server = message.guild;
 
     if (user.bot) return;
 
@@ -14,9 +15,9 @@ module.exports = {
 
       if (user.id == threadCreator.id) return;
 
-      level(message, 'Discussion');
+      levelSkill(server, user, 'Discussion');
     } else {
-      level(message, 'Messaging');
+      levelSkill(server, user, 'Messaging');
     }
   },
 };

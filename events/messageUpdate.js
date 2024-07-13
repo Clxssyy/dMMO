@@ -1,13 +1,16 @@
 const { Events } = require('discord.js');
-const level = require('../utils/level.js');
+const level = require('../utils/levelSkill');
 
 module.exports = {
   name: Events.MessageUpdate,
-  async execute(message) {
+  async execute(oldMessage, message) {
     const user = message.author;
+    const server = message.guild;
 
     if (user.bot) return;
 
-    level(message, 'Editing');
+    if (oldMessage.hasThread !== message.hasThread) return;
+
+    level(server, user, 'Editing');
   },
 };

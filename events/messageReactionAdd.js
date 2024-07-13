@@ -1,5 +1,5 @@
 const { Events } = require('discord.js');
-const level = require('../utils/level.js');
+const level = require('../utils/levelSkill');
 
 module.exports = {
   name: Events.MessageReactionAdd,
@@ -8,6 +8,8 @@ module.exports = {
 
     if (reaction.message.author === user) return;
 
-    level(reaction, 'Reacting');
+    const server = reaction.message.guild;
+
+    level(server, user, 'Reacting');
   },
 };

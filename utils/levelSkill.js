@@ -1,8 +1,6 @@
 const serverSchema = require('../schemas/server');
 
-module.exports = async (interaction, skill) => {
-  const server = interaction.guild;
-  const user = interaction.member;
+const levelSkill = async (server, user, skill) => {
   let serverData = await serverSchema.findOne({ serverID: server.id });
 
   if (!serverData) {
@@ -80,3 +78,5 @@ module.exports = async (interaction, skill) => {
     user.send(`You leveled up ${skill} to level ${Math.floor(level)}!`);
   }
 };
+
+module.exports = levelSkill;
