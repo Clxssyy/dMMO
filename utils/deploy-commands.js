@@ -4,33 +4,33 @@ const path = require('node:path');
 
 require('dotenv').config();
 
-const commands = [];
-const foldersPath = path.join(__dirname, '../commands');
-const commandFolders = fs.readdirSync(foldersPath);
+const deployCommands = async () => {
+  const commands = [];
 
-for (const folder of commandFolders) {
-  const commandsPath = path.join(foldersPath, folder);
-  const commandFiles = fs
-    .readdirSync(commandsPath)
-    .filter((file) => file.endsWith('.js'));
+  const commandsFolder = path.join(__dirname, '../commands');
+  const categories = fs.readdirSync(commandsFolder);
 
-  for (const file of commandFiles) {
-    const filePath = path.join(commandsPath, file);
-    const command = require(filePath);
+  for (const category of categories) {
+    const categoryFolder = path.join(commandsFolder, category);
+    const categoryCommands = fs
+      .readdirSync(categoryFolder)
+      .filter((file) => file.endsWith('.js'));
 
-    if ('data' in command && 'execute' in command) {
-      commands.push(command.data.toJSON());
-    } else {
-      console.log(
-        `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
-      );
+    for (const command of categoryCommands) {
+      const commandPath = path.join(categoryFolder, command);
+      const newCommand = require(commandPath);
+      if ('data' in newCommand && 'execute' in newCommand) {
+        commands.push(newCommand.data.toJSON());
+      } else {
+        console.log(
+          `[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`
+        );
+      }
     }
   }
-}
 
-const rest = new REST().setToken(process.env.BOT_TOKEN);
+  const rest = new REST().setToken(process.env.BOT_TOKEN);
 
-(async () => {
   try {
     console.log(
       `Started refreshing ${commands.length} application (/) commands.`
@@ -49,4 +49,6 @@ const rest = new REST().setToken(process.env.BOT_TOKEN);
   } catch (error) {
     console.error(error);
   }
-})();
+};
+
+module.exports = deployCommands;
