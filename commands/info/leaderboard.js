@@ -24,7 +24,7 @@ async function getUserStats(guild, skill) {
 
     const serverData = await serverSchema.findOne({ serverID: guild.id });
     const userStats = serverData.users
-      .filter((user) => userIDs.includes(user.userID))
+      .filter((user) => userIDs.includes(user.userID) && user[skill] > 0)
       .sort((a, b) => b[skill] - a[skill])
       .slice(0, 10);
 
@@ -42,12 +42,59 @@ async function getUserStats(guild, skill) {
  * @returns {Array} - Array of field objects for embed.
  */
 function getFields(userStats, skill, client) {
-  return userStats.map((userStat, index) => ({
-    name: `${index + 1}. ${
-      client.users.cache.get(String(userStat.userID)).username
-    }`,
-    value: `${userStat[skill]}`,
+  if (userStats.length === 0) {
+    return [
+      {
+        name: 'No users found',
+        value: 'Be the first to level up!',
+        inline: true,
+      },
+    ];
+  }
+
+  const userFields = userStats.map((userStat) => ({
+    name: `${client.users.cache.get(String(userStat.userID)).username}`,
+    value: '** **',
+    inline: true,
   }));
+
+  const levelFields = userStats.map((userStat) => ({
+    name: `${userStat[skill]}`,
+    value: '** **',
+    inline: true,
+  }));
+
+  const fields = [
+    {
+      name: 'Rank',
+      value: '** **',
+      inline: true,
+    },
+    {
+      name: 'User',
+      value: '** **',
+      inline: true,
+    },
+
+    {
+      name: 'Level',
+      value: '** **',
+      inline: true,
+    },
+  ];
+
+  for (let i = 0; i < userFields.length; i++) {
+    fields.push({
+      name: `${i + 1}.`,
+      value: '** **',
+      inline: true,
+    });
+    fields.push(userFields[i]);
+
+    fields.push(levelFields[i]);
+  }
+
+  return fields;
 }
 
 /**
@@ -60,11 +107,18 @@ function formatLeaderboard(fields, skill) {
   skill = skill.charAt(0).toUpperCase() + skill.slice(1);
   skill = skill.replace('Level', '');
 
+  // TODO: Add dynamic image for each skill. (Custom images)
   return new EmbedBuilder()
-    .setTitle(`dMMO ${skill} Leaderboard`)
-    .setDescription(`Top 10 players in the server.`)
+    .setTitle(`Top 10 ${skill} Level`)
+    .setThumbnail(
+      'https://www.netflix.com/tudum/top10/images/big_numbers/10.png'
+    )
     .setColor(LEADERBOARD_COLOR)
-    .setFields(fields);
+    .setFields(fields)
+    .setFooter({
+      text: 'Complete events and quests to level up!',
+    })
+    .setTimestamp();
 }
 
 module.exports = {
