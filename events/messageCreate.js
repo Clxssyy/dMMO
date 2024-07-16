@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
 const levelSkill = require('../utils/levelSkill');
+const levelRep = require('../utils/levelRep');
 
 module.exports = {
   name: Events.MessageCreate,
@@ -15,9 +16,14 @@ module.exports = {
 
       if (user.id == threadCreator.id) return;
 
-      levelSkill(server, user, 'Discussion');
+      levelSkill(server, user, 'Discussing');
+      levelRep(server, threadStartMessage.author, user);
     } else {
       levelSkill(server, user, 'Messaging');
+
+      if (message.type === 19 && !message.author.bot) {
+        levelRep(server, message.mentions.users.first(), user);
+      }
     }
   },
 };
