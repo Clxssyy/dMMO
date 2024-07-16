@@ -38,6 +38,8 @@ const levelSkill = async (server, user, skill) => {
             hostingCD: new Date(0),
             editingCD: new Date(0),
             cleaningCD: new Date(0),
+            reputation: 0,
+            cooldowns: [],
           },
         },
       }

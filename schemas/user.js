@@ -15,6 +15,13 @@ const userSchema = new Schema({
   hostingCD: Date,
   editingCD: Date,
   cleaningCD: Date,
+  reputation: Number,
+  cooldowns: [
+    {
+      user: String,
+      time: Date,
+    },
+  ],
 });
 
 module.exports = model('users', userSchema);

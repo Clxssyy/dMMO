@@ -104,7 +104,7 @@ module.exports = {
     ctx.fillStyle = infoColor;
     ctx.font = '20px Arial';
     ctx.fillText('Joined: ' + member.joinedAt.toDateString(), 20, 170);
-    ctx.fillText('Rep: 0', 20, 200);
+    ctx.fillText('Rep: ' + data.reputation, 20, 200);
     ctx.fillText('Views: 0', 300, 200);
 
     // Avatar

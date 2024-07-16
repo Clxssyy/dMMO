@@ -1,5 +1,6 @@
 const { Events } = require('discord.js');
-const level = require('../utils/levelSkill');
+const levelSkill = require('../utils/levelSkill');
+const levelRep = require('../utils/levelRep');
 
 module.exports = {
   name: Events.MessageReactionAdd,
@@ -10,6 +11,7 @@ module.exports = {
 
     const server = reaction.message.guild;
 
-    level(server, user, 'Reacting');
+    await levelSkill(server, user, 'Reacting');
+    await levelRep(server, reaction.message.author, user);
   },
 };
