@@ -1,5 +1,5 @@
 const { Events } = require('discord.js');
-const level = require('../utils/levelSkill');
+const levelSkill = require('../utils/levelSkill');
 
 module.exports = {
   name: Events.GuildScheduledEventUserAdd,
@@ -11,6 +11,6 @@ module.exports = {
 
     if (eventCreator.id == user.id) return;
 
-    level(server, event, 'Hosting');
+    levelSkill(server, eventCreator, 'Hosting');
   },
 };
