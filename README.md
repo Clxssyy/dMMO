@@ -70,11 +70,11 @@ Climb various leaderboards covering different timeframes and skills.
   - Titles
   - Colored names
   - Badges / achievements
-- [ ] Leaderboard
-- [ ] User profiles
+- [ ] Timed Leaderboard
+- [x] User profiles
 - [ ] Random events
 - [ ] Quests
-- [ ] Reputation system
+- [x] Reputation system
 
 ## Contribution
 
