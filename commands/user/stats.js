@@ -94,7 +94,7 @@ async function createStatsCanvas(user, stats) {
         ? 1
         : stats.value - level >= 0.01
         ? 0
-        : (1 - (stat.value - level)) * (level * 10);
+        : Math.round((1 - (stat.value - level)) * (level * 10));
     ctx.fillStyle = 'black';
     ctx.fillText(
       `${actions} remaining`,
