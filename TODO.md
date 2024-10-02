@@ -1,1 +1,5 @@
 - [x] Add server to level up messages
+- [ ] Add views to inspect
+- [ ] Add customization to profile/inspect/stats (name colors, titles, backgrounds)
+- [ ] Add events
+- [ ] Make unique leaderboards similar to inspect and stats
