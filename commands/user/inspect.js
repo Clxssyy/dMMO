@@ -1,20 +1,20 @@
-const { SlashCommandBuilder } = require("@discordjs/builders");
-const Canvas = require("@napi-rs/canvas");
-const { AttachmentBuilder } = require("discord.js");
-const serverSchema = require("../../schemas/server");
+const { SlashCommandBuilder } = require('@discordjs/builders');
+const Canvas = require('@napi-rs/canvas');
+const { AttachmentBuilder } = require('discord.js');
+const serverSchema = require('../../schemas/server');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName("inspect")
-    .setDescription("Inspect the user")
+    .setName('inspect')
+    .setDescription('Inspect the user')
     .addUserOption((option) =>
       option
-        .setName("user")
-        .setDescription("The user you want to inspect")
+        .setName('user')
+        .setDescription('The user you want to inspect')
         .setRequired(true)
     ),
   async execute(interaction) {
-    const user = interaction.options.getUser("user");
+    const user = interaction.options.getUser('user');
     const member = interaction.guild.members.cache.get(user.id);
 
     if (user.bot) {
@@ -28,7 +28,7 @@ module.exports = {
       serverID: interaction.guild.id,
     });
     if (!serverData) {
-      console.log("Creating new server in database");
+      console.log('Creating new server in database');
       await serverSchema.create({
         serverID: interaction.guild.id,
         users: [],
@@ -50,7 +50,7 @@ module.exports = {
     }
 
     const canvas = Canvas.createCanvas(700, 250);
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
 
     // Background gradient
     const gradient = ctx.createLinearGradient(
@@ -59,28 +59,28 @@ module.exports = {
       canvas.width,
       canvas.height
     );
-    gradient.addColorStop(0, "#4158D0");
-    gradient.addColorStop(0.5, "#C850C0");
-    gradient.addColorStop(1, "#FFCC70");
+    gradient.addColorStop(0, '#4158D0');
+    gradient.addColorStop(0.5, '#C850C0');
+    gradient.addColorStop(1, '#FFCC70');
     ctx.fillStyle = gradient;
     ctx.beginPath();
     ctx.roundRect(0, 0, canvas.width, canvas.height, 15);
     ctx.fill();
 
     // User info section
-    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-    ctx.font = "bold 32px Arial";
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.font = 'bold 32px Arial';
     ctx.fillText(user.displayName, 30, 50);
 
-    ctx.font = "18px Arial";
+    ctx.font = '18px Arial';
     ctx.fillText(`Level: ${stats.totalLevel}`, 40, 90);
     ctx.fillText(`Joined: ${member.joinedAt.toDateString()}`, 40, 120);
-    ctx.fillText(`Rep: ${stats.reputation}`, 40, 150);
+    ctx.fillText(`Rep: ${stats.reputation || 0}`, 40, 150);
     ctx.fillText(`Views: ${0}`, 40, 180);
 
     // Avatar
     const avatar = await Canvas.loadImage(
-      user.displayAvatarURL({ format: "png" })
+      user.displayAvatarURL({ format: 'png' })
     );
     ctx.save();
     ctx.beginPath();
@@ -91,7 +91,7 @@ module.exports = {
     ctx.restore();
 
     // Avatar border
-    ctx.strokeStyle = "white";
+    ctx.strokeStyle = 'white';
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.arc(587.5, 112.5, 87.5, 0, Math.PI * 2, true);
@@ -99,13 +99,13 @@ module.exports = {
     ctx.stroke();
 
     // Username badge
-    ctx.fillStyle = "rgba(255, 255, 255, 0.2)";
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
     ctx.beginPath();
     ctx.roundRect(500, 210, 175, 30, 15);
     ctx.fill();
 
-    ctx.fillStyle = "white";
-    ctx.font = "16px Arial";
+    ctx.fillStyle = 'white';
+    ctx.font = '16px Arial';
     ctx.fillText(user.username, 540, 230);
 
     // Icons
@@ -119,12 +119,12 @@ module.exports = {
     iconPositions.forEach((pos) => {
       ctx.beginPath();
       ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2, true);
-      ctx.fillStyle = "white";
+      ctx.fillStyle = 'white';
       ctx.fill();
     });
 
-    const attachment = new AttachmentBuilder(await canvas.encode("png"), {
-      name: "inspect.png",
+    const attachment = new AttachmentBuilder(await canvas.encode('png'), {
+      name: 'inspect.png',
     });
 
     await interaction.reply({ files: [attachment] });
