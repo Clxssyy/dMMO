@@ -1,1 +1,1 @@
-- Add server to level up messages
+- [x] Add server to level up messages
