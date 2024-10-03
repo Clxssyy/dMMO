@@ -4,3 +4,4 @@
 - [ ] Add events
 - [ ] Make unique leaderboards similar to inspect and stats
 - [ ] Change the way the cleaning skill works
+- [ ] Add time based leaderboards
