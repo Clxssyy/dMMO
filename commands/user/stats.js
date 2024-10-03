@@ -178,6 +178,9 @@ module.exports = {
               reputation: 0,
               profileViews: 0,
               cooldowns: [],
+              settings: {
+                color: 'white',
+              },
             },
           },
         }

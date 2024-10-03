@@ -41,6 +41,9 @@ const levelRep = async (server, user, sender) => {
             reputation: 0,
             profileViews: 0,
             cooldowns: [],
+            settings: {
+              color: 'white',
+            },
           },
         },
       }
@@ -80,6 +83,9 @@ const levelRep = async (server, user, sender) => {
             reputation: 0,
             profileViews: 0,
             cooldowns: [],
+            settings: {
+              color: 'white',
+            },
           },
         },
       }

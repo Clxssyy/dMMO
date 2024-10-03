@@ -1,4 +1,4 @@
-const { model, Schema } = require('mongoose');
+const { model, Schema, set } = require('mongoose');
 
 const userSchema = new Schema({
   userID: String,
@@ -23,6 +23,9 @@ const userSchema = new Schema({
       time: Date,
     },
   ],
+  settings: {
+    color: String,
+  },
 });
 
 module.exports = model('users', userSchema);

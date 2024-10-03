@@ -66,6 +66,9 @@ module.exports = {
               reputation: 0,
               profileViews: 0,
               cooldowns: [],
+              settings: {
+                color: 'white',
+              },
             },
           },
         }
@@ -99,10 +102,11 @@ module.exports = {
     ctx.fill();
 
     // User info section
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.fillStyle = stats.settings.color || 'white';
     ctx.font = 'bold 32px Arial';
     ctx.fillText(user.displayName, 30, 50);
 
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
     ctx.font = '18px Arial';
     ctx.fillText(`Level: ${stats.totalLevel}`, 40, 90);
     ctx.fillText(`Joined: ${member.joinedAt.toDateString()}`, 40, 120);
