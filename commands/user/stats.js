@@ -4,12 +4,12 @@ const { join } = require('path');
 const { AttachmentBuilder } = require('discord.js');
 const serverSchema = require('../../schemas/server');
 
-async function createdataCanvas(user, data) {
+async function createdataCanvas(user, data, serverData) {
   const canvas = Canvas.createCanvas(800, 600);
   const ctx = canvas.getContext('2d');
 
   Canvas.GlobalFonts.registerFromPath(
-    join(__dirname, '..', '..', 'fonts', 'MouldyCheese-Regular.ttf'),
+    join(__dirname, '..', '..', 'assets', 'fonts', 'MouldyCheese-Regular.ttf'),
     'Mouldy Cheese'
   );
 
@@ -85,6 +85,13 @@ async function createdataCanvas(user, data) {
     { name: 'Hosting', value: data.hostingLevel, color: '#7B68EE' },
   ];
 
+  // Crown Image
+  const crown = await Canvas.loadImage(
+    join(__dirname, '..', '..', 'assets', 'images', 'crown.png')
+  );
+
+  const crownWidth = 40;
+
   const startY = 250;
   const barHeight = 30;
   const gap = 25;
@@ -137,6 +144,32 @@ async function createdataCanvas(user, data) {
       labelWidth + maxBarWidth + 30,
       y + barHeight / 2 + 6
     );
+
+    // Crown on top left corner tilted 45 degrees
+    if (
+      serverData.users
+        .sort(
+          (a, b) =>
+            b[stat.name.toLowerCase() + 'Level'] -
+            a[stat.name.toLowerCase() + 'Level']
+        )
+        .findIndex((foundUser) => foundUser.userID == String(user.id)) === 0
+    ) {
+      ctx.save();
+      ctx.translate(labelWidth - 10, y);
+      ctx.rotate((-45 * Math.PI) / 180);
+      ctx.drawImage(crown, 0, 0, crownWidth, crownWidth);
+      ctx.restore();
+    }
+
+    // // Crown on top right corner tilted 45 degrees
+    // if (index === 1) {
+    //   ctx.save();
+    //   ctx.translate(labelWidth + maxBarWidth + 50, y);
+    //   ctx.rotate((45 * Math.PI) / 180);
+    //   ctx.drawImage(crown, -crownWidth, 0, crownWidth, crownWidth);
+    //   ctx.restore();
+    // }
   });
 
   // Total Level
@@ -222,7 +255,7 @@ module.exports = {
       );
     }
 
-    const canvas = await createdataCanvas(user, userdata);
+    const canvas = await createdataCanvas(user, userdata, serverData);
     const attachment = new AttachmentBuilder(await canvas.encode('png'), {
       name: `${user.id}-${server.id}-data.png`,
     });

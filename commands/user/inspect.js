@@ -90,7 +90,14 @@ module.exports = {
     const ctx = canvas.getContext('2d');
 
     Canvas.GlobalFonts.registerFromPath(
-      join(__dirname, '..', '..', 'fonts', 'MouldyCheese-Regular.ttf'),
+      join(
+        __dirname,
+        '..',
+        '..',
+        'assets',
+        'fonts',
+        'MouldyCheese-Regular.ttf'
+      ),
       'Mouldy Cheese'
     );
 
