@@ -1,20 +1,30 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const Canvas = require('@napi-rs/canvas');
+const { join } = require('path');
 const { AttachmentBuilder } = require('discord.js');
 const serverSchema = require('../../schemas/server');
 
-async function createStatsCanvas(user, stats) {
+async function createdataCanvas(user, data) {
   const canvas = Canvas.createCanvas(800, 600);
   const ctx = canvas.getContext('2d');
 
-  // Background gradient
-  let color = `hsl(${Math.floor(Math.random() * 360)}, 100%, 50%)`;
-  let color2 = `hsl(${Math.floor(Math.random() * 360)}, 100%, 50%)`;
+  Canvas.GlobalFonts.registerFromPath(
+    join(__dirname, '..', '..', 'fonts', 'MouldyCheese-Regular.ttf'),
+    'Mouldy Cheese'
+  );
+  console.info(Canvas.GlobalFonts.families);
 
-  // If the colors are too similar, change the second color
-  if (Math.abs(color.charCodeAt(0) - color2.charCodeAt(0)) < 20) {
-    color2 = `hsl(${(color.charCodeAt(0) + 180) % 360}, 100%, 50%)`;
+  // Background
+  // TODO: Add background color customization
+  let hue1 = Math.floor(Math.random() * 360);
+  let hue2 = Math.floor(Math.random() * 360);
+
+  if (Math.abs(hue1 - hue2) < 50) {
+    hue2 = (hue1 + 180) % 360;
   }
+
+  let color = `hsl(${hue1}, 100%, 50%)`;
+  let color2 = `hsl(${hue2}, 100%, 50%)`;
 
   const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
   gradient.addColorStop(0, color);
@@ -22,13 +32,29 @@ async function createStatsCanvas(user, stats) {
   ctx.fillStyle = gradient;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  // Title
-  ctx.font = 'bold 40px Arial';
-  ctx.fillStyle = 'black';
-  ctx.textAlign = 'center';
-  ctx.fillText(`${user.displayName}'s Stats`, canvas.width / 2, 50);
+  // TODO: Add border color customization
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 4;
+  ctx.strokeRect(0, 0, canvas.width, canvas.height);
 
-  // Avatar
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.beginPath();
+  ctx.arc(400, 300, 200, 0, Math.PI * 2, true);
+  ctx.closePath();
+  ctx.fill();
+
+  // Username and title
+  // TODO: Add text color customization
+  // TODO: Add titles to user's name
+  ctx.shadowColor = 'black';
+  ctx.shadowBlur = 10;
+  ctx.font = '40px Mouldy Cheese';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'center';
+  ctx.fillText(`${user.displayName}`, canvas.width / 2, 50);
+  ctx.shadowBlur = 0;
+
+  // User avatar
   const avatar = await Canvas.loadImage(
     user.displayAvatarURL({ format: 'png' })
   );
@@ -40,21 +66,24 @@ async function createStatsCanvas(user, stats) {
   ctx.drawImage(avatar, canvas.width / 2 - 70, 70, 140, 140);
   ctx.restore();
 
-  ctx.strokeStyle = 'black';
+  ctx.shadowBlur = 10;
+  ctx.strokeStyle = 'white';
   ctx.lineWidth = 4;
   ctx.beginPath();
   ctx.arc(canvas.width / 2, 140, 70, 0, Math.PI * 2, true);
   ctx.closePath();
   ctx.stroke();
+  ctx.shadowBlur = 0;
 
   // Stats
+  // TODO: Add some indication of when users are in the top 10 of a skill
   const statCategories = [
-    { name: 'Messaging', value: stats.messagingLevel, color: '#FF6B6B' },
-    { name: 'Editing', value: stats.editingLevel, color: '#4ECDC4' },
-    { name: 'Reacting', value: stats.reactingLevel, color: '#45B7D1' },
-    { name: 'Cleaning', value: stats.cleaningLevel, color: '#98D8C8' },
-    { name: 'Discussion', value: stats.discussingLevel, color: '#F7B801' },
-    { name: 'Hosting', value: stats.hostingLevel, color: '#7B68EE' },
+    { name: 'Messaging', value: data.messagingLevel, color: '#FF6B6B' },
+    { name: 'Editing', value: data.editingLevel, color: '#4ECDC4' },
+    { name: 'Reacting', value: data.reactingLevel, color: '#45B7D1' },
+    { name: 'Cleaning', value: data.cleaningLevel, color: '#98D8C8' },
+    { name: 'Discussion', value: data.discussingLevel, color: '#F7B801' },
+    { name: 'Hosting', value: data.hostingLevel, color: '#7B68EE' },
   ];
 
   const startY = 250;
@@ -63,17 +92,16 @@ async function createStatsCanvas(user, stats) {
   const maxBarWidth = 500;
   const labelWidth = 120;
 
-  ctx.font = '20px Arial';
-
   statCategories.forEach((stat, index) => {
     const y = startY + (barHeight + gap) * index;
 
+    ctx.font = '20px Mouldy Cheese';
     ctx.textAlign = 'right';
     ctx.fillStyle = 'black';
     ctx.fillText(stat.name, labelWidth, y + barHeight / 2 + 6);
 
     // Stat Bar
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
     ctx.fillRect(labelWidth + 20, y, maxBarWidth, barHeight);
 
     const level = Math.floor(stat.value);
@@ -84,39 +112,41 @@ async function createStatsCanvas(user, stats) {
     ctx.fillStyle = stat.color;
     ctx.fillRect(labelWidth + 20, y, barWidth, barHeight);
 
-    // Bar border
     ctx.strokeStyle = 'black';
     ctx.lineWidth = 2;
     ctx.strokeRect(labelWidth + 20, y, maxBarWidth, barHeight);
 
-    const actions =
-      level === 0
-        ? 1
-        : stats.value - level >= 0.01
-        ? 0
-        : Math.round((1 - (stat.value - level)) * (level * 10));
-    ctx.fillStyle = 'black';
-    ctx.fillText(
-      `${actions} remaining`,
-      (canvas.width + labelWidth) / 2,
-      y + barHeight / 2 + 6
-    );
+    // Actions remaining till next level
+    // const actions =
+    //   level === 0
+    //     ? 1
+    //     : data.value - level >= 0.01
+    //     ? 0
+    //     : Math.round((1 - (stat.value - level)) * (level * 10));
+    ctx.shadowBlur = 10;
+    ctx.font = '16px Mouldy Cheese';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'white';
+    ctx.fillText(`${progress}%`, canvas.width / 2, y + barHeight / 2 + 6);
+    ctx.shadowBlur = 0;
 
-    // Level and progress
+    ctx.font = '20px Mouldy Cheese';
     ctx.fillStyle = 'black';
     ctx.textAlign = 'left';
     ctx.fillText(
-      `Lvl ${stat.value} (${progress}%)`,
+      `Lvl ${stat.value}`,
       labelWidth + maxBarWidth + 30,
       y + barHeight / 2 + 6
     );
   });
 
   // Total Level
-  ctx.font = 'bold 30px Arial';
-  ctx.fillStyle = 'black';
+  ctx.shadowBlur = 10;
+  ctx.font = '30px Mouldy Cheese';
+  ctx.fillStyle = 'white';
   ctx.textAlign = 'center';
-  ctx.fillText(`Total Level: ${stats.totalLevel}`, canvas.width / 2, 590);
+  ctx.fillText(`Total Level: ${data.totalLevel}`, canvas.width / 2, 590);
+  ctx.shadowBlur = 0;
 
   return canvas;
 }
@@ -124,16 +154,16 @@ async function createStatsCanvas(user, stats) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('stats')
-    .setDescription("Shows the user's stats")
+    .setDescription("Shows the user's data")
     .addUserOption((option) =>
-      option.setName('user').setDescription("The user's stats you want to see")
+      option.setName('user').setDescription("The user's data you want to see")
     ),
   async execute(interaction) {
     const user = interaction.options.getUser('user') || interaction.user;
 
     if (user.bot)
       return interaction.reply({
-        content: 'Bots have no stats!',
+        content: 'Bots have no data!',
         ephemeral: true,
       });
 
@@ -141,7 +171,7 @@ module.exports = {
     let serverData = await serverSchema.findOne({ serverID: server.id });
 
     if (!serverData) {
-      // Create new server in database
+      console.log(`Creating new server in database: ${server.id}`);
       await serverSchema.create({
         serverID: server.id,
         users: [],
@@ -150,12 +180,12 @@ module.exports = {
       serverData = await serverSchema.findOne({ serverID: server.id });
     }
 
-    let userStats = await serverData.users.find(
+    let userdata = await serverData.users.find(
       (foundUser) => foundUser.userID == String(user.id)
     );
 
-    if (!userStats) {
-      // Create new user in database
+    if (!userdata) {
+      console.log(`Creating new user in database: ${user.id} in ${server.id}`);
       await serverSchema.updateOne(
         { serverID: server.id },
         {
@@ -188,14 +218,14 @@ module.exports = {
 
       serverData = await serverSchema.findOne({ serverID: server.id });
 
-      userStats = await serverData.users.find(
+      userdata = await serverData.users.find(
         (foundUser) => foundUser.userID == String(user.id)
       );
     }
 
-    const canvas = await createStatsCanvas(user, userStats);
+    const canvas = await createdataCanvas(user, userdata);
     const attachment = new AttachmentBuilder(await canvas.encode('png'), {
-      name: 'stats.png',
+      name: `${user.id}-${server.id}-data.png`,
     });
 
     await interaction.reply({ files: [attachment] });

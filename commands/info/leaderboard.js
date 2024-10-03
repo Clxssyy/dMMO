@@ -1,7 +1,6 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('@discordjs/builders');
 const serverSchema = require('../../schemas/server');
-
-const LEADERBOARD_COLOR = 0x5662f6;
+const { embedColor } = require('../../config.json');
 
 /**
  * Gets the top 10 users in the server for the selected skill.
@@ -113,7 +112,7 @@ function formatLeaderboard(fields, skill) {
     .setThumbnail(
       'https://www.netflix.com/tudum/top10/images/big_numbers/10.png'
     )
-    .setColor(LEADERBOARD_COLOR)
+    .setColor(embedColor)
     .setFields(fields)
     .setFooter({
       text: 'Complete events and quests to level up!',
@@ -124,7 +123,9 @@ function formatLeaderboard(fields, skill) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('leaderboard')
-    .setDescription('Shows the stats leaderboard for users in the server.')
+    .setDescription(
+      'Display a leaderboard of the top 10 users in various skills.'
+    )
     .addStringOption((option) =>
       option
         .setName('skill')

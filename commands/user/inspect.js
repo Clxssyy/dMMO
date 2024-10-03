@@ -28,7 +28,7 @@ module.exports = {
       serverID: interaction.guild.id,
     });
     if (!serverData) {
-      console.log('Creating new server in database');
+      console.log(`Creating new server in database: ${interaction.guild.id}`);
       await serverSchema.create({
         serverID: interaction.guild.id,
         users: [],
@@ -43,7 +43,9 @@ module.exports = {
       (foundUser) => foundUser.userID == String(user.id)
     );
     if (!stats) {
-      // Create new user in database
+      console.log(
+        `Creating new user in database: ${user.id} in ${interaction.guild.id}`
+      );
       await serverSchema.updateOne(
         { serverID: interaction.guild.id },
         {

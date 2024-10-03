@@ -5,6 +5,8 @@ const {
   ActionRowBuilder,
 } = require('@discordjs/builders');
 
+const { embedColor } = require('../../config.json');
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('bot')
@@ -13,7 +15,7 @@ module.exports = {
     const embed = new EmbedBuilder()
       .setTitle('dMMO')
       .setDescription(
-        'Keep track of your activity in a MMO format with:\n\n> Skills\n> Quests\n> Events\n> Leaderboards\n\nYou can even collect unique titles and roles!\n\nType `/` to see all the commands.'
+        'Keep track of your activity in a MMORPG format with:\n\n> Skills\n> Quests (TBA)\n> Events\n> Leaderboards\n> Custom Profiles\n\nYou can even collect unique titles and customizations!\n\nType `/` to see all the commands.'
       )
       .addFields(
         {
@@ -30,7 +32,7 @@ module.exports = {
         }
       )
       .setThumbnail(interaction.client.user.displayAvatarURL())
-      .setColor(0x5662f6)
+      .setColor(embedColor)
       .setFooter({
         text: 'Have a suggestion?',
       })

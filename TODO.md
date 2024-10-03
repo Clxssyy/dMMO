@@ -3,3 +3,4 @@
 - [ ] Add customization to profile/inspect/stats (name colors, titles, backgrounds)
 - [ ] Add events
 - [ ] Make unique leaderboards similar to inspect and stats
+- [ ] Change the way the cleaning skill works

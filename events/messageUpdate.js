@@ -7,8 +7,10 @@ module.exports = {
     const user = message.author;
     const server = message.guild;
 
+    // Bot actions are not tracked
     if (user.bot) return;
 
+    // This causes messaging and editing to gain levels at the same time
     if (oldMessage.hasThread !== message.hasThread) return;
 
     level(server, user, 'Editing');

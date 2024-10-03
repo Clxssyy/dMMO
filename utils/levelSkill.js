@@ -4,7 +4,6 @@ const levelSkill = async (server, user, skill) => {
   let serverData = await serverSchema.findOne({ serverID: server.id });
 
   if (!serverData) {
-    // Create new server in database
     await serverSchema.create({
       serverID: server.id,
       users: [],
@@ -18,7 +17,6 @@ const levelSkill = async (server, user, skill) => {
   );
 
   if (!data) {
-    // Create new user in database
     await serverSchema.updateOne(
       { serverID: server.id },
       {

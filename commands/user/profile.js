@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const serverSchema = require('../../schemas/server');
-const { set } = require('mongoose');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -11,7 +10,19 @@ module.exports = {
         .setName('set')
         .setDescription('Set your profile')
         .addStringOption((option) =>
-          option.setName('color').setDescription('Set your profile color')
+          option
+            .setName('color')
+            .setDescription('Set your profile color')
+            .addChoices(
+              {
+                name: 'White',
+                value: 'white',
+              },
+              { name: 'Red', value: 'red' },
+              { name: 'Blue', value: 'blue' },
+              { name: 'Green', value: 'green' },
+              { name: 'Yellow', value: 'yellow' }
+            )
         )
     )
     .addSubcommand((subcommand) =>
@@ -31,7 +42,7 @@ module.exports = {
     });
 
     if (!serverData) {
-      console.log('Creating new server in database');
+      console.log(`Creating new server in database: ${interaction.guild.id}`);
       await serverSchema.create({
         serverID: interaction.guild.id,
         users: [],
@@ -47,7 +58,9 @@ module.exports = {
     );
 
     if (!data) {
-      console.log('Creating new user in database');
+      console.log(
+        `Creating new user in database: ${interaction.user.id} in ${interaction.guild.id}`
+      );
       await serverSchema.findOneAndUpdate(
         { serverID: interaction.guild.id },
         {
@@ -97,11 +110,45 @@ module.exports = {
         });
       }
 
-      if (!['white', 'red', 'blue', 'green', 'yellow'].includes(color)) {
-        return interaction.reply({
-          content: 'Please provide a valid color.',
-          ephemeral: true,
-        });
+      switch (color) {
+        case 'red':
+          if (data.totalLevel < 100) {
+            return interaction.reply({
+              content: 'You need to reach level 100 to unlock the red color.',
+              ephemeral: true,
+            });
+          }
+          break;
+
+        case 'blue':
+          if (data.totalLevel < 50) {
+            return interaction.reply({
+              content: 'You need to reach level 50 to unlock the blue color.',
+              ephemeral: true,
+            });
+          }
+          break;
+
+        case 'green':
+          if (data.totalLevel < 25) {
+            return interaction.reply({
+              content: 'You need to reach level 25 to unlock the green color.',
+              ephemeral: true,
+            });
+          }
+          break;
+
+        case 'yellow':
+          if (data.totalLevel < 10) {
+            return interaction.reply({
+              content: 'You need to reach level 10 to unlock the yellow color.',
+              ephemeral: true,
+            });
+          }
+          break;
+
+        default:
+          break;
       }
 
       await serverSchema.updateOne(
@@ -115,6 +162,22 @@ module.exports = {
 
       return interaction.reply({
         content: `Your profile color has been set to ${color}.`,
+        ephemeral: true,
+      });
+    }
+
+    if (subcommand === 'reset') {
+      await serverSchema.updateOne(
+        { serverID: interaction.guild.id, 'users.userID': user.id },
+        {
+          $set: {
+            'users.$.settings.color': 'white',
+          },
+        }
+      );
+
+      return interaction.reply({
+        content: 'Your profile color has been reset to white.',
         ephemeral: true,
       });
     }
