@@ -43,10 +43,41 @@ module.exports = {
       (foundUser) => foundUser.userID == String(user.id)
     );
     if (!stats) {
-      return await interaction.reply({
-        content: "User doesn't have a profile yet",
-        ephemeral: true,
+      // Create new user in database
+      await serverSchema.updateOne(
+        { serverID: interaction.guild.id },
+        {
+          $push: {
+            users: {
+              userID: user.id,
+              messagingLevel: 0,
+              reactingLevel: 0,
+              discussingLevel: 0,
+              hostingLevel: 0,
+              editingLevel: 0,
+              cleaningLevel: 0,
+              totalLevel: 0,
+              messagingCD: new Date(0),
+              reactingCD: new Date(0),
+              discussingCD: new Date(0),
+              hostingCD: new Date(0),
+              editingCD: new Date(0),
+              cleaningCD: new Date(0),
+              reputation: 0,
+              profileViews: 0,
+              cooldowns: [],
+            },
+          },
+        }
+      );
+
+      serverData = await serverSchema.findOne({
+        serverID: interaction.guild.id,
       });
+
+      stats = await serverData.users.find(
+        (foundUser) => foundUser.userID == String(user.id)
+      );
     }
 
     const canvas = Canvas.createCanvas(700, 250);
@@ -76,7 +107,11 @@ module.exports = {
     ctx.fillText(`Level: ${stats.totalLevel}`, 40, 90);
     ctx.fillText(`Joined: ${member.joinedAt.toDateString()}`, 40, 120);
     ctx.fillText(`Rep: ${stats.reputation || 0}`, 40, 150);
-    ctx.fillText(`Views: ${0}`, 40, 180);
+    ctx.fillText(
+      `Views: ${stats.profileViews ? stats.profileViews + 1 : 1}`,
+      40,
+      180
+    );
 
     // Avatar
     const avatar = await Canvas.loadImage(
@@ -126,6 +161,15 @@ module.exports = {
     const attachment = new AttachmentBuilder(await canvas.encode('png'), {
       name: 'inspect.png',
     });
+
+    await serverSchema.findOneAndUpdate(
+      { serverID: interaction.guild.id, 'users.userID': user.id },
+      {
+        ['users.$.profileViews']: stats.profileViews
+          ? stats.profileViews + 1
+          : 1,
+      }
+    );
 
     await interaction.reply({ files: [attachment] });
   },

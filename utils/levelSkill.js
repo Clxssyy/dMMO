@@ -1,4 +1,4 @@
-const serverSchema = require("../schemas/server");
+const serverSchema = require('../schemas/server');
 
 const levelSkill = async (server, user, skill) => {
   let serverData = await serverSchema.findOne({ serverID: server.id });
@@ -39,6 +39,7 @@ const levelSkill = async (server, user, skill) => {
             editingCD: new Date(0),
             cleaningCD: new Date(0),
             reputation: 0,
+            profileViews: 0,
             cooldowns: [],
           },
         },
@@ -52,11 +53,11 @@ const levelSkill = async (server, user, skill) => {
     );
   }
   // Anti-spam
-  if (Date.parse(data[skill.toLowerCase() + "CD"]) + 60000 > Date.now()) {
+  if (Date.parse(data[skill.toLowerCase() + 'CD']) + 60000 > Date.now()) {
     return;
   }
 
-  let level = data[skill.toLowerCase() + "Level"];
+  let level = data[skill.toLowerCase() + 'Level'];
   const oldLevel = level;
 
   if (level == 0) {
@@ -67,11 +68,11 @@ const levelSkill = async (server, user, skill) => {
 
   // Update level in database
   await serverSchema.findOneAndUpdate(
-    { serverID: server.id, "users.userID": user.id },
+    { serverID: server.id, 'users.userID': user.id },
     {
-      ["users.$." + skill.toLowerCase() + "Level"]: level.toFixed(4),
-      ["users.$." + skill.toLowerCase() + "CD"]: Date.now(),
-      ["users.$.totalLevel"]: (data.totalLevel + level - oldLevel).toFixed(4),
+      ['users.$.' + skill.toLowerCase() + 'Level']: level.toFixed(4),
+      ['users.$.' + skill.toLowerCase() + 'CD']: Date.now(),
+      ['users.$.totalLevel']: (data.totalLevel + level - oldLevel).toFixed(4),
     }
   );
 

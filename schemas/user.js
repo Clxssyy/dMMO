@@ -16,6 +16,7 @@ const userSchema = new Schema({
   editingCD: Date,
   cleaningCD: Date,
   reputation: Number,
+  profileViews: Number,
   cooldowns: [
     {
       user: String,

@@ -175,6 +175,9 @@ module.exports = {
               hostingCD: new Date(0),
               editingCD: new Date(0),
               cleaningCD: new Date(0),
+              reputation: 0,
+              profileViews: 0,
+              cooldowns: [],
             },
           },
         }
