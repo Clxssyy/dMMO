@@ -2,6 +2,7 @@ const { SlashCommandBuilder } = require('@discordjs/builders');
 const Canvas = require('@napi-rs/canvas');
 const { AttachmentBuilder } = require('discord.js');
 const serverSchema = require('../../schemas/server');
+const { join } = require('path');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -88,6 +89,11 @@ module.exports = {
     const canvas = Canvas.createCanvas(700, 250);
     const ctx = canvas.getContext('2d');
 
+    Canvas.GlobalFonts.registerFromPath(
+      join(__dirname, '..', '..', 'fonts', 'MouldyCheese-Regular.ttf'),
+      'Mouldy Cheese'
+    );
+
     // Background gradient
     const gradient = ctx.createLinearGradient(
       0,
@@ -103,20 +109,27 @@ module.exports = {
     ctx.roundRect(0, 0, canvas.width, canvas.height, 15);
     ctx.fill();
 
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    ctx.beginPath();
+    ctx.roundRect(10, 10, 680, 230, 15);
+    ctx.fill();
+
     // User info section
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = 'black';
     ctx.fillStyle = stats.settings.color || 'white';
-    ctx.font = 'bold 32px Arial';
+    ctx.font = '32px Mouldy Cheese';
     ctx.fillText(user.displayName, 30, 50);
 
     ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-    ctx.font = '18px Arial';
-    ctx.fillText(`Level: ${stats.totalLevel}`, 40, 90);
-    ctx.fillText(`Joined: ${member.joinedAt.toDateString()}`, 40, 120);
-    ctx.fillText(`Rep: ${stats.reputation || 0}`, 40, 150);
+    ctx.font = '18px Mouldy Cheese';
+    ctx.fillText(`Level: ${stats.totalLevel}`, 45, 105);
+    ctx.fillText(`Joined: ${member.joinedAt.toDateString()}`, 45, 145);
+    ctx.fillText(`Rep: ${stats.reputation || 0}`, 45, 185);
     ctx.fillText(
       `Views: ${stats.profileViews ? stats.profileViews + 1 : 1}`,
-      40,
-      180
+      45,
+      225
     );
 
     // Avatar
@@ -140,32 +153,33 @@ module.exports = {
     ctx.stroke();
 
     // Username badge
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
     ctx.beginPath();
     ctx.roundRect(500, 210, 175, 30, 15);
     ctx.fill();
 
     ctx.fillStyle = 'white';
-    ctx.font = '16px Arial';
-    ctx.fillText(user.username, 540, 230);
+    ctx.font = '16px Mouldy Cheese';
+    ctx.textAlign = 'center';
+    ctx.fillText(user.username, 587.5, 230);
 
     // Icons
     const iconPositions = [
-      { x: 30, y: 80 },
-      { x: 30, y: 110 },
-      { x: 30, y: 140 },
-      { x: 30, y: 170 },
+      { x: 32, y: 100 },
+      { x: 32, y: 138 },
+      { x: 32, y: 178 },
+      { x: 32, y: 218 },
     ];
 
     iconPositions.forEach((pos) => {
       ctx.beginPath();
-      ctx.arc(pos.x, pos.y, 8, 0, Math.PI * 2, true);
+      ctx.arc(pos.x, pos.y, 7, 0, Math.PI * 2, true);
       ctx.fillStyle = 'white';
       ctx.fill();
     });
 
     const attachment = new AttachmentBuilder(await canvas.encode('png'), {
-      name: 'inspect.png',
+      name: `${user.username}-${interaction.guild.id}-profile.png`,
     });
 
     if (interaction.user.id !== user.id) {

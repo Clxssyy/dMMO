@@ -12,7 +12,6 @@ async function createdataCanvas(user, data) {
     join(__dirname, '..', '..', 'fonts', 'MouldyCheese-Regular.ttf'),
     'Mouldy Cheese'
   );
-  console.info(Canvas.GlobalFonts.families);
 
   // Background
   // TODO: Add background color customization
