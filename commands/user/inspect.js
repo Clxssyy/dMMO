@@ -166,14 +166,16 @@ module.exports = {
       name: 'inspect.png',
     });
 
-    await serverSchema.findOneAndUpdate(
-      { serverID: interaction.guild.id, 'users.userID': user.id },
-      {
-        ['users.$.profileViews']: stats.profileViews
-          ? stats.profileViews + 1
-          : 1,
-      }
-    );
+    if (interaction.user.id !== user.id) {
+      await serverSchema.findOneAndUpdate(
+        { serverID: interaction.guild.id, 'users.userID': user.id },
+        {
+          ['users.$.profileViews']: stats.profileViews
+            ? stats.profileViews + 1
+            : 1,
+        }
+      );
+    }
 
     await interaction.reply({ files: [attachment] });
   },
