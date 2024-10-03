@@ -145,15 +145,16 @@ async function createdataCanvas(user, data, serverData) {
       y + barHeight / 2 + 6
     );
 
+    const sortedUsers = serverData.users.sort(
+      (a, b) =>
+        b[stat.name.toLowerCase() + 'Level'] -
+        a[stat.name.toLowerCase() + 'Level']
+    );
     // Crown on top left corner tilted 45 degrees
     if (
-      serverData.users
-        .sort(
-          (a, b) =>
-            b[stat.name.toLowerCase() + 'Level'] -
-            a[stat.name.toLowerCase() + 'Level']
-        )
-        .findIndex((foundUser) => foundUser.userID == String(user.id)) === 0
+      sortedUsers[0].userID === user.id &&
+      sortedUsers[0][stat.name.toLowerCase() + 'Level'] !==
+        sortedUsers[1][stat.name.toLowerCase() + 'Level']
     ) {
       ctx.save();
       ctx.translate(labelWidth - 10, y);
