@@ -4,7 +4,7 @@ const { join } = require('path');
 const { AttachmentBuilder } = require('discord.js');
 const serverSchema = require('../../schemas/server');
 
-async function createdataCanvas(user, data, serverData) {
+async function createStatsCanvas(user, data, serverData) {
   const canvas = Canvas.createCanvas(800, 600);
   const ctx = canvas.getContext('2d');
 
@@ -256,7 +256,7 @@ module.exports = {
       );
     }
 
-    const canvas = await createdataCanvas(user, userdata, serverData);
+    const canvas = await createStatsCanvas(user, userdata, serverData);
     const attachment = new AttachmentBuilder(await canvas.encode('png'), {
       name: `${user.id}-${server.id}-data.png`,
     });
