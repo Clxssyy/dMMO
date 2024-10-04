@@ -1,5 +1,7 @@
 const { SlashCommandBuilder } = require('@discordjs/builders');
 const serverSchema = require('../../schemas/server');
+const createProfile = require('../../utils/createProfile');
+const { AttachmentBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -36,6 +38,7 @@ module.exports = {
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand();
     const user = interaction.user;
+    const member = interaction.guild.members.cache.get(user.id);
 
     let serverData = await serverSchema.findOne({
       serverID: interaction.guild.id,
@@ -178,6 +181,19 @@ module.exports = {
 
       return interaction.reply({
         content: 'Your profile color has been reset to white.',
+        ephemeral: true,
+      });
+    }
+
+    if (subcommand === 'view') {
+      const profileImage = await createProfile(data, user, member);
+
+      const attachment = new AttachmentBuilder(profileImage, {
+        name: `${user.username}-${interaction.guild.id}-profile.png`,
+      });
+
+      return interaction.reply({
+        files: [attachment],
         ephemeral: true,
       });
     }
