@@ -5,3 +5,5 @@
 - [ ] Make unique leaderboards similar to inspect and stats
 - [ ] Change the way the cleaning skill works
 - [ ] Add time based leaderboards
+- [ ] Change level up messages to be a unique canvas
+- [ ] Add opt-out per server for users
