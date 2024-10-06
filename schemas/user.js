@@ -25,6 +25,7 @@ const userSchema = new Schema({
   ],
   settings: {
     color: String,
+    title: String,
   },
 });
 

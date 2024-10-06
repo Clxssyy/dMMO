@@ -85,7 +85,12 @@ module.exports = {
       );
     }
 
-    const profileImage = await createProfile(data, user, member);
+    const profileImage = await createProfile(
+      data,
+      user,
+      member,
+      interaction.guild.id
+    );
 
     const attachment = new AttachmentBuilder(profileImage, {
       name: `${user.username}-${interaction.guild.id}-profile.png`,

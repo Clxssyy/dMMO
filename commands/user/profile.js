@@ -26,6 +26,23 @@ module.exports = {
               { name: 'Yellow', value: 'yellow' }
             )
         )
+        .addStringOption((option) =>
+          option
+            .setName('title')
+            .setDescription('Set your user title')
+            .addChoices(
+              {
+                name: 'Top Chatter',
+                value: 'Top Chatter',
+              },
+              { name: 'Top Reactor', value: 'Top Reactor' },
+              { name: 'Top Debater', value: 'Top Debater' },
+              { name: 'Top Host', value: 'Top Host' },
+              { name: 'Top Editor', value: 'Top Editor' },
+              { name: 'Top Cleaner', value: 'Top Cleaner' },
+              { name: 'None', value: 'None' }
+            )
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand.setName('view').setDescription('View your profile')
@@ -105,68 +122,206 @@ module.exports = {
 
     if (subcommand === 'set') {
       const color = interaction.options.getString('color');
+      const title = interaction.options.getString('title');
 
-      if (!color) {
+      if (!color && !title) {
         return interaction.reply({
-          content: 'Please provide a color to set your profile to.',
+          content: 'Please provide an option to set.',
           ephemeral: true,
         });
       }
 
-      switch (color) {
-        case 'red':
-          if (data.totalLevel < 100) {
-            return interaction.reply({
-              content: 'You need to reach level 100 to unlock the red color.',
-              ephemeral: true,
-            });
-          }
-          break;
-
-        case 'blue':
-          if (data.totalLevel < 50) {
-            return interaction.reply({
-              content: 'You need to reach level 50 to unlock the blue color.',
-              ephemeral: true,
-            });
-          }
-          break;
-
-        case 'green':
-          if (data.totalLevel < 25) {
-            return interaction.reply({
-              content: 'You need to reach level 25 to unlock the green color.',
-              ephemeral: true,
-            });
-          }
-          break;
-
-        case 'yellow':
-          if (data.totalLevel < 10) {
-            return interaction.reply({
-              content: 'You need to reach level 10 to unlock the yellow color.',
-              ephemeral: true,
-            });
-          }
-          break;
-
-        default:
-          break;
+      if (color && title) {
+        return interaction.reply({
+          content: 'You can only set one option at a time.',
+          ephemeral: true,
+        });
       }
 
-      await serverSchema.updateOne(
-        { serverID: interaction.guild.id, 'users.userID': user.id },
-        {
-          $set: {
-            'users.$.settings.color': color,
-          },
-        }
-      );
+      if (color) {
+        switch (color) {
+          case 'red':
+            if (data.totalLevel < 100) {
+              return interaction.reply({
+                content: 'You need to reach level 100 to unlock the red color.',
+                ephemeral: true,
+              });
+            }
+            break;
 
-      return interaction.reply({
-        content: `Your profile color has been set to ${color}.`,
-        ephemeral: true,
-      });
+          case 'blue':
+            if (data.totalLevel < 50) {
+              return interaction.reply({
+                content: 'You need to reach level 50 to unlock the blue color.',
+                ephemeral: true,
+              });
+            }
+            break;
+
+          case 'green':
+            if (data.totalLevel < 25) {
+              return interaction.reply({
+                content:
+                  'You need to reach level 25 to unlock the green color.',
+                ephemeral: true,
+              });
+            }
+            break;
+
+          case 'yellow':
+            if (data.totalLevel < 10) {
+              return interaction.reply({
+                content:
+                  'You need to reach level 10 to unlock the yellow color.',
+                ephemeral: true,
+              });
+            }
+            break;
+
+          default:
+            break;
+        }
+
+        await serverSchema.updateOne(
+          { serverID: interaction.guild.id, 'users.userID': user.id },
+          {
+            $set: {
+              'users.$.settings.color': color,
+            },
+          }
+        );
+
+        return interaction.reply({
+          content: `Your profile color has been set to ${color}.`,
+          ephemeral: true,
+        });
+      }
+
+      if (title) {
+        let topUsers = [];
+        switch (title) {
+          case 'Top Chatter':
+            topUsers = serverData.users.sort(
+              (a, b) => b.messagingLevel - a.messagingLevel
+            );
+
+            if (
+              topUsers[0].userID !== user.id &&
+              topUsers[0].userID !== topUsers[1].userID
+            ) {
+              return interaction.reply({
+                content: 'You need to be the top chatter to unlock this title.',
+                ephemeral: true,
+              });
+            }
+            break;
+
+          case 'Top Reactor':
+            topUsers = serverData.users.sort(
+              (a, b) => b.reactingLevel - a.reactingLevel
+            );
+
+            if (
+              topUsers[0].userID !== user.id &&
+              topUsers[0].userID !== topUsers[1].userID
+            ) {
+              return interaction.reply({
+                content: 'You need to be the top reactor to unlock this title.',
+                ephemeral: true,
+              });
+            }
+            break;
+
+          case 'Top Debater':
+            topUsers = serverData.users.sort(
+              (a, b) => b.discussingLevel - a.discussingLevel
+            );
+
+            if (
+              topUsers[0].userID !== user.id &&
+              topUsers[0].userID !== topUsers[1].userID
+            ) {
+              return interaction.reply({
+                content: 'You need to be the top debater to unlock this title.',
+                ephemeral: true,
+              });
+            }
+            break;
+
+          case 'Top Host':
+            topUsers = serverData.users.sort(
+              (a, b) => b.hostingLevel - a.hostingLevel
+            );
+
+            if (
+              topUsers[0].userID !== user.id &&
+              topUsers[0].userID !== topUsers[1].userID
+            ) {
+              return interaction.reply({
+                content: 'You need to be the top host to unlock this title.',
+                ephemeral: true,
+              });
+            }
+            break;
+
+          case 'Top Editor':
+            topUsers = serverData.users.sort(
+              (a, b) => b.editingLevel - a.editingLevel
+            );
+
+            if (
+              topUsers[0].userID !== user.id &&
+              topUsers[0].userID !== topUsers[1].userID
+            ) {
+              return interaction.reply({
+                content: 'You need to be the top editor to unlock this title.',
+                ephemeral: true,
+              });
+            }
+            break;
+
+          case 'Top Cleaner':
+            topUsers = serverData.users.sort(
+              (a, b) => b.cleaningLevel - a.cleaningLevel
+            );
+
+            if (
+              topUsers[0].userID !== user.id &&
+              topUsers[0].userID !== topUsers[1].userID
+            ) {
+              return interaction.reply({
+                content: 'You need to be the top cleaner to unlock this title.',
+                ephemeral: true,
+              });
+            }
+            break;
+
+          default:
+            serverSchema.updateOne(
+              { serverID: interaction.guild.id, 'users.userID': user.id },
+              {
+                $set: {
+                  'users.$.settings.title': '',
+                },
+              }
+            );
+            break;
+        }
+
+        await serverSchema.updateOne(
+          { serverID: interaction.guild.id, 'users.userID': user.id },
+          {
+            $set: {
+              'users.$.settings.title': title,
+            },
+          }
+        );
+
+        return interaction.reply({
+          content: `Your profile title has been set to ${title}.`,
+          ephemeral: true,
+        });
+      }
     }
 
     if (subcommand === 'reset') {
@@ -175,6 +330,7 @@ module.exports = {
         {
           $set: {
             'users.$.settings.color': 'white',
+            'users.$.settings.title': '',
           },
         }
       );
@@ -186,7 +342,12 @@ module.exports = {
     }
 
     if (subcommand === 'view') {
-      const profileImage = await createProfile(data, user, member);
+      const profileImage = await createProfile(
+        data,
+        user,
+        member,
+        interaction.guild.id
+      );
 
       const attachment = new AttachmentBuilder(profileImage, {
         name: `${user.username}-${interaction.guild.id}-profile.png`,

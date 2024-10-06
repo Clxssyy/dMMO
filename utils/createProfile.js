@@ -1,7 +1,8 @@
 const { join } = require('path');
 const Canvas = require('@napi-rs/canvas');
+const checkTitle = require('./checkTitle');
 
-const createProfile = async (data, user, member) => {
+const createProfile = async (data, user, member, serverID) => {
   const canvas = Canvas.createCanvas(700, 250);
   const ctx = canvas.getContext('2d');
 
@@ -30,7 +31,9 @@ const createProfile = async (data, user, member) => {
   ctx.shadowColor = 'black';
   ctx.fillStyle = data.settings.color || 'white';
   ctx.font = '32px Mouldy Cheese';
-  ctx.fillText(user.displayName, 30, 50);
+
+  const title = await checkTitle(data, serverID);
+  ctx.fillText(title + user.displayName, 30, 50);
 
   ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
   ctx.font = '18px Mouldy Cheese';
