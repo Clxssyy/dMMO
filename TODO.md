@@ -1,9 +1,12 @@
 - [x] Add server to level up messages
 - [x] Add views to inspect
-- [ ] Add customization to profile/inspect/stats (name colors, titles, backgrounds)
+- [x] Add customization to profile/inspect/stats (name colors, titles, backgrounds)
 - [ ] Add events
 - [ ] Make unique leaderboards similar to inspect and stats
 - [ ] Change the way the cleaning skill works
 - [ ] Add time based leaderboards
 - [ ] Change level up messages to be a unique canvas
 - [ ] Add opt-out per server for users
+- [ ] Add better / more options for customization
+- [ ] Add goal oriented customization and a way to view that
+- [ ] Add text color option for profile
