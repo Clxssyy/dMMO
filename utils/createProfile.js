@@ -65,13 +65,13 @@ const createProfile = async (data, user, member, serverID) => {
   ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
   ctx.font = "18px Mouldy Cheese";
   ctx.fillText(`Level: ${data.totalLevel}`, 45, 105);
-  ctx.fillText(`Joined: ${member.joinedAt.toDateString()}`, 45, 145);
-  ctx.fillText(`Rep: ${data.reputation || 0}`, 45, 185);
+  ctx.fillText(`Rep: ${data.reputation || 0}`, 45, 145);
   ctx.fillText(
     `Views: ${data.profileViews ? data.profileViews + 1 : 1}`,
     45,
-    225
+    185
   );
+  ctx.fillText(`Joined: ${member.joinedAt.toDateString()}`, 45, 225);
 
   // Avatar
   const avatar = await Canvas.loadImage(
