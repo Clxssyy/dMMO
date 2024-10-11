@@ -1,56 +1,69 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const serverSchema = require('../../schemas/server');
-const createProfile = require('../../utils/createProfile');
-const { AttachmentBuilder } = require('discord.js');
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const serverSchema = require("../../schemas/server");
+const createProfile = require("../../utils/createProfile");
+const { AttachmentBuilder } = require("discord.js");
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('profile')
-    .setDescription('Customize your profile')
+    .setName("profile")
+    .setDescription("Customize your profile")
     .addSubcommand((subcommand) =>
       subcommand
-        .setName('set')
-        .setDescription('Set your profile')
+        .setName("set")
+        .setDescription("Set your profile")
         .addStringOption((option) =>
           option
-            .setName('color')
-            .setDescription('Set your profile color')
+            .setName("color")
+            .setDescription("Set your profile color")
             .addChoices(
               {
-                name: 'White',
-                value: 'white',
+                name: "White",
+                value: "white",
               },
-              { name: 'Red', value: 'red' },
-              { name: 'Blue', value: 'blue' },
-              { name: 'Green', value: 'green' },
-              { name: 'Yellow', value: 'yellow' }
+              { name: "Red", value: "red" },
+              { name: "Blue", value: "blue" },
+              { name: "Green", value: "green" },
+              { name: "Yellow", value: "yellow" }
             )
         )
         .addStringOption((option) =>
           option
-            .setName('title')
-            .setDescription('Set your user title')
+            .setName("title")
+            .setDescription("Set your user title")
             .addChoices(
               {
-                name: 'Top Chatter',
-                value: 'Top Chatter',
+                name: "Top Chatter",
+                value: "Top Chatter",
               },
-              { name: 'Top Reactor', value: 'Top Reactor' },
-              { name: 'Top Debater', value: 'Top Debater' },
-              { name: 'Top Host', value: 'Top Host' },
-              { name: 'Top Editor', value: 'Top Editor' },
-              { name: 'Top Cleaner', value: 'Top Cleaner' },
-              { name: 'None', value: 'None' }
+              { name: "Top Reactor", value: "Top Reactor" },
+              { name: "Top Debater", value: "Top Debater" },
+              { name: "Top Host", value: "Top Host" },
+              { name: "Top Editor", value: "Top Editor" },
+              { name: "Top Cleaner", value: "Top Cleaner" },
+              { name: "None", value: "None" }
+            )
+        )
+        .addStringOption((option) =>
+          option
+            .setName("background")
+            .setDescription("Set your profile background")
+            .addChoices(
+              {
+                name: "Gradient",
+                value: "gradient",
+              },
+              { name: "Dark", value: "dark" },
+              { name: "Light", value: "light" }
             )
         )
     )
     .addSubcommand((subcommand) =>
-      subcommand.setName('view').setDescription('View your profile')
+      subcommand.setName("view").setDescription("View your profile")
     )
     .addSubcommand((subcommand) =>
       subcommand
-        .setName('reset')
-        .setDescription('Reset your profile to default.')
+        .setName("reset")
+        .setDescription("Reset your profile to default.")
     ),
   async execute(interaction) {
     const subcommand = interaction.options.getSubcommand();
@@ -104,7 +117,7 @@ module.exports = {
               profileViews: 0,
               cooldowns: [],
               settings: {
-                color: 'white',
+                color: "white",
               },
             },
           },
@@ -120,59 +133,62 @@ module.exports = {
       );
     }
 
-    if (subcommand === 'set') {
-      const color = interaction.options.getString('color');
-      const title = interaction.options.getString('title');
+    if (subcommand === "set") {
+      const color = interaction.options.getString("color");
+      const title = interaction.options.getString("title");
+      const background = interaction.options.getString("background");
 
-      if (!color && !title) {
+      // No option provided
+      if (!color && !title && !background) {
         return interaction.reply({
-          content: 'Please provide an option to set.',
+          content: "Please provide an option to set.",
           ephemeral: true,
         });
       }
 
-      if (color && title) {
+      // More than one option provided
+      if ((color && title) || (color && background) || (title && background)) {
         return interaction.reply({
-          content: 'You can only set one option at a time.',
+          content: "Please provide only one option to set.",
           ephemeral: true,
         });
       }
 
       if (color) {
         switch (color) {
-          case 'red':
+          case "red":
             if (data.totalLevel < 100) {
               return interaction.reply({
-                content: 'You need to reach level 100 to unlock the red color.',
+                content: "You need to reach level 100 to unlock the red color.",
                 ephemeral: true,
               });
             }
             break;
 
-          case 'blue':
+          case "blue":
             if (data.totalLevel < 50) {
               return interaction.reply({
-                content: 'You need to reach level 50 to unlock the blue color.',
+                content: "You need to reach level 50 to unlock the blue color.",
                 ephemeral: true,
               });
             }
             break;
 
-          case 'green':
+          case "green":
             if (data.totalLevel < 25) {
               return interaction.reply({
                 content:
-                  'You need to reach level 25 to unlock the green color.',
+                  "You need to reach level 25 to unlock the green color.",
                 ephemeral: true,
               });
             }
             break;
 
-          case 'yellow':
+          case "yellow":
             if (data.totalLevel < 10) {
               return interaction.reply({
                 content:
-                  'You need to reach level 10 to unlock the yellow color.',
+                  "You need to reach level 10 to unlock the yellow color.",
                 ephemeral: true,
               });
             }
@@ -183,10 +199,10 @@ module.exports = {
         }
 
         await serverSchema.updateOne(
-          { serverID: interaction.guild.id, 'users.userID': user.id },
+          { serverID: interaction.guild.id, "users.userID": user.id },
           {
             $set: {
-              'users.$.settings.color': color,
+              "users.$.settings.color": color,
             },
           }
         );
@@ -200,7 +216,7 @@ module.exports = {
       if (title) {
         let topUsers = [];
         switch (title) {
-          case 'Top Chatter':
+          case "Top Chatter":
             topUsers = serverData.users.sort(
               (a, b) => b.messagingLevel - a.messagingLevel
             );
@@ -210,13 +226,13 @@ module.exports = {
               topUsers[0].userID !== topUsers[1].userID
             ) {
               return interaction.reply({
-                content: 'You need to be the top chatter to unlock this title.',
+                content: "You need to be the top chatter to unlock this title.",
                 ephemeral: true,
               });
             }
             break;
 
-          case 'Top Reactor':
+          case "Top Reactor":
             topUsers = serverData.users.sort(
               (a, b) => b.reactingLevel - a.reactingLevel
             );
@@ -226,13 +242,13 @@ module.exports = {
               topUsers[0].userID !== topUsers[1].userID
             ) {
               return interaction.reply({
-                content: 'You need to be the top reactor to unlock this title.',
+                content: "You need to be the top reactor to unlock this title.",
                 ephemeral: true,
               });
             }
             break;
 
-          case 'Top Debater':
+          case "Top Debater":
             topUsers = serverData.users.sort(
               (a, b) => b.discussingLevel - a.discussingLevel
             );
@@ -242,13 +258,13 @@ module.exports = {
               topUsers[0].userID !== topUsers[1].userID
             ) {
               return interaction.reply({
-                content: 'You need to be the top debater to unlock this title.',
+                content: "You need to be the top debater to unlock this title.",
                 ephemeral: true,
               });
             }
             break;
 
-          case 'Top Host':
+          case "Top Host":
             topUsers = serverData.users.sort(
               (a, b) => b.hostingLevel - a.hostingLevel
             );
@@ -258,13 +274,13 @@ module.exports = {
               topUsers[0].userID !== topUsers[1].userID
             ) {
               return interaction.reply({
-                content: 'You need to be the top host to unlock this title.',
+                content: "You need to be the top host to unlock this title.",
                 ephemeral: true,
               });
             }
             break;
 
-          case 'Top Editor':
+          case "Top Editor":
             topUsers = serverData.users.sort(
               (a, b) => b.editingLevel - a.editingLevel
             );
@@ -274,13 +290,13 @@ module.exports = {
               topUsers[0].userID !== topUsers[1].userID
             ) {
               return interaction.reply({
-                content: 'You need to be the top editor to unlock this title.',
+                content: "You need to be the top editor to unlock this title.",
                 ephemeral: true,
               });
             }
             break;
 
-          case 'Top Cleaner':
+          case "Top Cleaner":
             topUsers = serverData.users.sort(
               (a, b) => b.cleaningLevel - a.cleaningLevel
             );
@@ -290,7 +306,7 @@ module.exports = {
               topUsers[0].userID !== topUsers[1].userID
             ) {
               return interaction.reply({
-                content: 'You need to be the top cleaner to unlock this title.',
+                content: "You need to be the top cleaner to unlock this title.",
                 ephemeral: true,
               });
             }
@@ -298,10 +314,10 @@ module.exports = {
 
           default:
             serverSchema.updateOne(
-              { serverID: interaction.guild.id, 'users.userID': user.id },
+              { serverID: interaction.guild.id, "users.userID": user.id },
               {
                 $set: {
-                  'users.$.settings.title': '',
+                  "users.$.settings.title": "",
                 },
               }
             );
@@ -309,10 +325,10 @@ module.exports = {
         }
 
         await serverSchema.updateOne(
-          { serverID: interaction.guild.id, 'users.userID': user.id },
+          { serverID: interaction.guild.id, "users.userID": user.id },
           {
             $set: {
-              'users.$.settings.title': title,
+              "users.$.settings.title": title,
             },
           }
         );
@@ -322,26 +338,42 @@ module.exports = {
           ephemeral: true,
         });
       }
+
+      if (background) {
+        await serverSchema.updateOne(
+          { serverID: interaction.guild.id, "users.userID": user.id },
+          {
+            $set: {
+              "users.$.settings.background": background,
+            },
+          }
+        );
+
+        return interaction.reply({
+          content: `Your profile background has been set to ${background}.`,
+          ephemeral: true,
+        });
+      }
     }
 
-    if (subcommand === 'reset') {
+    if (subcommand === "reset") {
       await serverSchema.updateOne(
-        { serverID: interaction.guild.id, 'users.userID': user.id },
+        { serverID: interaction.guild.id, "users.userID": user.id },
         {
           $set: {
-            'users.$.settings.color': 'white',
-            'users.$.settings.title': '',
+            "users.$.settings.color": "white",
+            "users.$.settings.title": "",
           },
         }
       );
 
       return interaction.reply({
-        content: 'Your profile color has been reset to white.',
+        content: "Your profile color has been reset to white.",
         ephemeral: true,
       });
     }
 
-    if (subcommand === 'view') {
+    if (subcommand === "view") {
       const profileImage = await createProfile(
         data,
         user,
