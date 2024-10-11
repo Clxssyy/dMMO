@@ -96,13 +96,13 @@ const createProfile = async (data, user, member, serverID) => {
   // Username badge
   ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
   ctx.beginPath();
-  ctx.roundRect(500, 210, 175, 30, 15);
+  ctx.roundRect(500, 210, 175, 25, 15);
   ctx.fill();
 
   ctx.fillStyle = "white";
   ctx.font = "16px Mouldy Cheese";
   ctx.textAlign = "center";
-  ctx.fillText(user.username, 587.5, 230);
+  ctx.fillText(user.username, 587.5, 228);
 
   // Icons
   const iconPositions = [
