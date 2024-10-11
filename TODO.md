@@ -10,3 +10,4 @@
 - [ ] Add better / more options for customization
 - [ ] Add goal oriented customization and a way to view that
 - [ ] Add text color option for profile
+- [ ] Redesign profile
