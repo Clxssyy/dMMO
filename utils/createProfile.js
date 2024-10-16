@@ -1,69 +1,76 @@
-const { join } = require("path");
-const Canvas = require("@napi-rs/canvas");
-const checkTitle = require("./checkTitle");
+const { join } = require('path');
+const Canvas = require('@napi-rs/canvas');
+const checkTitle = require('./checkTitle');
 
 const createProfile = async (data, user, member, serverID) => {
   const canvas = Canvas.createCanvas(700, 250);
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext('2d');
 
   Canvas.GlobalFonts.registerFromPath(
-    join(__dirname, "..", "assets", "fonts", "MouldyCheese-Regular.ttf"),
-    "Mouldy Cheese"
+    join(__dirname, '..', 'assets', 'fonts', 'MouldyCheese-Regular.ttf'),
+    'Mouldy Cheese'
   );
 
   // Background
+  let backgroundColor;
   switch (data.settings.background) {
-    case "gradient":
+    case 'gradient':
       const gradient = ctx.createLinearGradient(
         0,
         0,
         canvas.width,
         canvas.height
       );
-      gradient.addColorStop(0, "#4158D0");
-      gradient.addColorStop(0.5, "#C850C0");
-      gradient.addColorStop(1, "#FFCC70");
-      ctx.fillStyle = gradient;
-      ctx.beginPath();
-      ctx.roundRect(0, 0, canvas.width, canvas.height, 15);
-      ctx.fill();
+      gradient.addColorStop(0, '#4158D0');
+      gradient.addColorStop(0.5, '#C850C0');
+      gradient.addColorStop(1, '#FFCC70');
+      backgroundColor = gradient;
       break;
-    case "dark":
-      ctx.fillStyle = "#2C3E50";
-      ctx.beginPath();
-      ctx.roundRect(0, 0, canvas.width, canvas.height, 15);
-      ctx.fill();
+    case 'dark':
+      backgroundColor = '#2C3E50';
       break;
-    case "light":
-      ctx.fillStyle = "#ECF0F1";
-      ctx.beginPath();
-      ctx.roundRect(0, 0, canvas.width, canvas.height, 15);
-      ctx.fill();
+    case 'light':
+      backgroundColor = '#ECF0F1';
       break;
     default:
-      ctx.fillStyle = "#2C3E50";
-      ctx.beginPath();
-      ctx.roundRect(0, 0, canvas.width, canvas.height, 15);
-      ctx.fill();
+      backgroundColor = '#2C3E50';
       break;
   }
 
-  ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+  ctx.fillStyle = backgroundColor;
+  ctx.beginPath();
+  ctx.roundRect(0, 0, canvas.width, canvas.height, 15);
+  ctx.fill();
+
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
   ctx.beginPath();
   ctx.roundRect(10, 10, 680, 230, 15);
   ctx.fill();
 
+  let textColor;
+  switch (data.settings.text) {
+    case 'dark':
+      textColor = 'rgba(0, 0, 0, 0.7)';
+      break;
+    case 'light':
+      textColor = 'rgba(255, 255, 255, 0.7)';
+      break;
+    default:
+      textColor = 'rgba(255, 255, 255, 0.7)';
+      break;
+  }
+
   // User info section
   ctx.shadowBlur = 10;
-  ctx.shadowColor = "black";
-  ctx.fillStyle = data.settings.color || "white";
-  ctx.font = "32px Mouldy Cheese";
+  ctx.shadowColor = 'black';
+  ctx.fillStyle = data.settings.color || 'white';
+  ctx.font = '32px Mouldy Cheese';
 
   const title = await checkTitle(data, serverID);
   ctx.fillText(title + user.displayName, 30, 50);
 
-  ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
-  ctx.font = "18px Mouldy Cheese";
+  ctx.fillStyle = textColor;
+  ctx.font = '18px Mouldy Cheese';
   ctx.fillText(`Level: ${data.totalLevel}`, 45, 105);
   ctx.fillText(`Rep: ${data.reputation || 0}`, 45, 145);
   ctx.fillText(
@@ -75,7 +82,7 @@ const createProfile = async (data, user, member, serverID) => {
 
   // Avatar
   const avatar = await Canvas.loadImage(
-    user.displayAvatarURL({ format: "png" })
+    user.displayAvatarURL({ format: 'png' })
   );
   ctx.save();
   ctx.beginPath();
@@ -86,7 +93,7 @@ const createProfile = async (data, user, member, serverID) => {
   ctx.restore();
 
   // Avatar border
-  ctx.strokeStyle = "white";
+  ctx.strokeStyle = data.settings.color || 'white';
   ctx.lineWidth = 4;
   ctx.beginPath();
   ctx.arc(587.5, 112.5, 87.5, 0, Math.PI * 2, true);
@@ -94,14 +101,14 @@ const createProfile = async (data, user, member, serverID) => {
   ctx.stroke();
 
   // Username badge
-  ctx.fillStyle = "rgba(0, 0, 0, 0.2)";
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.2)';
   ctx.beginPath();
   ctx.roundRect(500, 210, 175, 25, 15);
   ctx.fill();
 
-  ctx.fillStyle = "white";
-  ctx.font = "16px Mouldy Cheese";
-  ctx.textAlign = "center";
+  ctx.fillStyle = textColor;
+  ctx.font = '16px Mouldy Cheese';
+  ctx.textAlign = 'center';
   ctx.fillText(user.username, 587.5, 228);
 
   // Icons
@@ -115,11 +122,11 @@ const createProfile = async (data, user, member, serverID) => {
   iconPositions.forEach((pos) => {
     ctx.beginPath();
     ctx.arc(pos.x, pos.y, 7, 0, Math.PI * 2, true);
-    ctx.fillStyle = "white";
+    ctx.fillStyle = textColor;
     ctx.fill();
   });
 
-  return canvas.encode("png");
+  return canvas.encode('png');
 };
 
 module.exports = createProfile;
